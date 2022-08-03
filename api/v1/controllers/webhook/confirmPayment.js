@@ -1,7 +1,7 @@
 const R = require("ramda");
 const RA = require("ramda-adjunct");
 const registerPayment = require("../../../../main/registerPayment");
-const paymentLinkModel = require("../../../../models/payment-links.model");
+const paymentModel = require("../../../../models/payments.model");
 
 const parseCheckoutSessionData = R.pipe(
   R.pathOr({}, ["body", "data", "object"]),
@@ -17,7 +17,7 @@ const parseCheckoutSessionData = R.pipe(
     id: "checkoutSession",
     amount_subtotal: "amountSubtotal",
     amount_total: "amountTotal",
-    payment_link: "paymentLinkId",
+    payment_link: "paymentId",
     payment_intent: "paymentIntentId",
   }),
   (value) => ({
@@ -28,11 +28,11 @@ const parseCheckoutSessionData = R.pipe(
 );
 
 module.exports = (req) => {
-  const { paymentLinkId, ...data } = parseCheckoutSessionData(req);
+  const { paymentId, ...data } = parseCheckoutSessionData(req);
 
-  return paymentLinkModel
+  return paymentModel
     .find({
-      selector: { paymentLinkId },
+      selector: { paymentId },
       sort: [{ createdAt: "desc" }],
       limit: 1,
     })
@@ -41,6 +41,8 @@ module.exports = (req) => {
     .then(R.omit(["_rev", "createdAt", "type"]))
     .then(R.mergeDeepLeft(data))
     .then(({ _id, ...value }) =>
-      paymentLinkModel.update(_id, value).then(() => registerPayment(_id))
+      paymentModel
+        .update(_id, value)
+        .then(() => registerPayment(_id.split(":")[1]))
     );
 };

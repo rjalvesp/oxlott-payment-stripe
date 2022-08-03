@@ -1,9 +1,9 @@
 const ensureAuthenticated = require("../../middlewares/ensure-authenticated");
-const createPaymentLink = require("../../controllers/payments/createPaymentLink");
+const createPayment = require("../../controllers/payments/createPayment");
 const router = require("express").Router();
 
 router.get("/", ensureAuthenticated, (req, res) => {
-  createPaymentLink(req).then((value) => res.status(200).json(value));
+  createPayment(req).then((value) => res.status(200).json(value));
 });
 
 module.exports = router;

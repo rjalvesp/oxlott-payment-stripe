@@ -3,7 +3,7 @@ const Joi = require("joi");
 module.exports = {
   model: {
     userId: Joi.string().required(),
-    paymentLinkId: Joi.string().required(),
+    paymentId: Joi.string().required(),
     checkoutSession: Joi.string().optional(),
     amountSubtotal: Joi.string().optional(),
     amountTotal: Joi.string().optional(),
