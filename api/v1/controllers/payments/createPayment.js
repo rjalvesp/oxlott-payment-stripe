@@ -4,8 +4,8 @@ const createPrice = require("../../../../stripe/createPrice");
 const getAllProducts = require("../../../../stripe/getAllProducts");
 const paymentModel = require("../../../../models/payments.model");
 
-const storePayment = ({ _id: userId }, { id: paymentId }) =>
-  paymentModel.create({ userId, paymentId, paid: false });
+const storePayment = (user, { id: paymentId }) =>
+  paymentModel.create({ userId: user._id, paymentId, paid: false, user });
 
 module.exports = (req) => {
   return getAllProducts()
